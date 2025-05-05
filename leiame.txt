@@ -1,0 +1,374 @@
+// Obtendo elementos do formulário
+const form = document.getElementById("form"); // Seleciona o formulário pelo ID.
+const amount = document.getElementById("amount"); // Campo de entrada do valor.
+const currency = document.getElementById("currency"); // Campo de seleção de moeda.
+
+// Impede que caracteres não numéricos sejam digitados no campo "amount".
+amount.addEventListener("input", () => {
+    const hasCharacteresRegex = /\D+/g; // Expressão regular para encontrar caracteres não numéricos.
+    amount.value = amount.value.replace(hasCharacteresRegex, ""); // Remove caracteres inválidos.
+});
+
+// Captura o evento de envio do formulário.
+form.onsubmit = async (event) => {
+    event.preventDefault(); // Impede o comportamento padrão de recarregar a página.
+
+    console.log(currency.value); // Exibe no console a moeda escolhida pelo usuário.
+
+    switch (currency.value) {
+        // Verifica se a moeda selecionada é suportada.
+        case "USD": // Caso seja USD (Dólar Americano).
+        case "EUR": // Caso seja EUR (Euro).
+        case "GBP": // Caso seja GBP (Libra Esterlina).
+            await convertCurrency(amount.value, currency.value); // Chama a função de conversão.
+            break;
+        default:
+            console.log("Moeda não suportada."); // Loga no console.
+            alert("Moeda não suportada."); // Notifica o usuário.
+    }
+};
+
+// Função que busca a cotação e realiza a conversão da moeda.
+async function convertCurrency(amount, currency) {
+    // URL da API com a moeda selecionada.
+    const url = `https://economia.awesomeapi.com.br/json/last/${currency}-BRL`;
+
+    try {
+        const response = await fetch(url); // Faz uma requisição HTTP para a API.
+        const data = await response.json(); // Converte a resposta em JSON.
+        const exchangeRate = data[`${currency}BRL`].bid; // Obtém a taxa de câmbio (campo "bid").
+
+        // Calcula o valor convertido e formata com 2 casas decimais.
+        const convertedValue = (amount * exchangeRate).toFixed(2);
+
+        // Exibe o valor convertido no console e em um alerta.
+        console.log(`Valor convertido: R$ ${convertedValue}`);
+        alert(`Valor convertido para ${currency}: R$ ${convertedValue}`);
+    } catch (error) {
+        // Trata erros de requisição ou ao acessar os dados da API.
+        console.error("Erro ao buscar cotação:", error);
+        alert("Erro ao obter a cotação. Por favor, tente novamente.");
+    }
+}
+
+
+==================================================================================================
+
+
+
+Como posso usar a cotação atual do dolar em javascript
+Você pode usar APIs para obter a cotação atual do dólar em JavaScript. Aqui está um exemplo básico de como fazer isso:
+
+Escolha uma API: Algumas opções populares incluem:
+
+Banco Central do Brasil: API oficial com dados financeiros.
+
+AwesomeAPI: Oferece cotações em tempo real.
+
+DolarApi: Simples e focada em cotações de moedas.
+
+Faça uma requisição HTTP: Use fetch ou bibliotecas como Axios para acessar os dados. Aqui está um exemplo com fetch:
+
+javascript
+const url = "https://economia.awesomeapi.com.br/json/last/USD-BRL";
+
+fetch(url)
+  .then(response => response.json())
+  .then(data => {
+    const cotacao = data.USDBRL.bid;
+    console.log(`Cotação atual do dólar: R$ ${cotacao}`);
+  })
+  .catch(error => console.error("Erro ao buscar cotação:", error));
+Interprete os dados: A resposta geralmente vem em formato JSON. No exemplo acima, a cotação de compra está no campo bid.
+
+Se precisar de mais ajuda para integrar isso ao seu projeto, é só avisar! 🚀
+
+faca a integração nesse codigo base: // Obtendo elementos do formulario const form = document.getElementById("form") const amount = document.getElementById("amount") const currency = document.getElementById("currency") // Recebendo somente numeros no input amount.addEventListener("input", ()=>{ const hasCharacteresRegex = /\D+/g amount.value = amount.value.replace(hasCharacteresRegex, "") }) // Captando submit do form form.onsubmit = (event) => { //event.preventDefault() console.log(currency.value) switch (currency.value) { case "USD": convertCurrency(amount.value, currency) } } //convertendo moeda function convertCurrency(amount, price, symbol,) { }
+Aqui está a integração do seu código para obter a cotação do dólar e realizar a conversão da moeda usando a API AwesomeAPI. O código inclui a função convertCurrency que busca a cotação e faz a conversão:
+
+javascript
+// Obtendo elementos do formulario
+const form = document.getElementById("form");
+const amount = document.getElementById("amount");
+const currency = document.getElementById("currency");
+
+// Recebendo somente numeros no input
+amount.addEventListener("input", () => {
+    const hasCharacteresRegex = /\D+/g;
+    amount.value = amount.value.replace(hasCharacteresRegex, "");
+});
+
+// Captando submit do form
+form.onsubmit = async (event) => {
+    event.preventDefault(); // Evita o envio padrão do formulário
+
+    console.log(currency.value);
+
+    switch (currency.value) {
+        case "USD":
+            convertCurrency(amount.value, "USD");
+            break;
+        default:
+            console.log("Moeda não suportada.");
+    }
+};
+
+// Convertendo moeda
+async function convertCurrency(amount, currency) {
+    const url = `https://economia.awesomeapi.com.br/json/last/${currency}-BRL`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const exchangeRate = data[`${currency}BRL`].bid; // Cotação de compra
+        const convertedValue = (amount * exchangeRate).toFixed(2);
+
+        console.log(`Valor convertido: R$ ${convertedValue}`);
+        alert(`Valor convertido: R$ ${convertedValue}`);
+    } catch (error) {
+        console.error("Erro ao buscar cotação:", error);
+        alert("Erro ao obter a cotação. Por favor, tente novamente.");
+    }
+}
+Explicação das mudanças:
+async/await em form.onsubmit:
+
+Tornei a função assíncrona para lidar com a chamada API de forma eficiente.
+
+Usei event.preventDefault() para evitar a submissão padrão do formulário.
+
+Requisição para a API:
+
+Na função convertCurrency, o fetch obtém a cotação do dólar através da URL da AwesomeAPI.
+
+O campo bid contém a cotação de compra, usado para calcular o valor convertido.
+
+Exibição do resultado:
+
+O valor convertido é exibido no console e também em um alert para o usuário.
+
+Agora, quando o formulário é submetido e a moeda selecionada for "USD", o sistema buscará a cotação atual e fará a conversão. Você pode estender o código para suportar outras moedas, adicionando mais casos no switch. 🚀 Se precisar de mais ajuda, é só me chamar!
+
+agora adione a seguintes moedas segundo o codigo html no javascript : <option value="EUR">Euro</option> <option value="GBP">Libra Esterlina</option>
+Aqui está a atualização do seu código para incluir a conversão de Euro (EUR) e Libra Esterlina (GBP) ao lado do dólar (USD). Adicionei os casos apropriados no switch e ajustei a função para tratar essas moedas:
+
+javascript
+// Obtendo elementos do formulario
+const form = document.getElementById("form");
+const amount = document.getElementById("amount");
+const currency = document.getElementById("currency");
+
+// Recebendo somente números no input
+amount.addEventListener("input", () => {
+    const hasCharacteresRegex = /\D+/g;
+    amount.value = amount.value.replace(hasCharacteresRegex, "");
+});
+
+// Captando submit do form
+form.onsubmit = async (event) => {
+    event.preventDefault(); // Evita o envio padrão do formulário
+
+    console.log(currency.value);
+
+    switch (currency.value) {
+        case "USD":
+        case "EUR":
+        case "GBP":
+            await convertCurrency(amount.value, currency.value);
+            break;
+        default:
+            console.log("Moeda não suportada.");
+            alert("Moeda não suportada.");
+    }
+};
+
+// Convertendo moeda
+async function convertCurrency(amount, currency) {
+    const url = `https://economia.awesomeapi.com.br/json/last/${currency}-BRL`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const exchangeRate = data[`${currency}BRL`].bid; // Cotação de compra
+        const convertedValue = (amount * exchangeRate).toFixed(2);
+
+        console.log(`Valor convertido: R$ ${convertedValue}`);
+        alert(`Valor convertido para ${currency}: R$ ${convertedValue}`);
+    } catch (error) {
+        console.error("Erro ao buscar cotação:", error);
+        alert("Erro ao obter a cotação. Por favor, tente novamente.");
+    }
+}
+O que foi adicionado:
+Casos para EUR e GBP no switch:
+
+Agora o código verifica se a moeda selecionada é USD, EUR ou GBP e chama a função convertCurrency adequadamente.
+
+Adaptação da função convertCurrency:
+
+A URL é dinamicamente construída com base na moeda selecionada.
+
+A cotação é acessada do campo correspondente, por exemplo, EURBRL ou GBPBRL.
+
+Suporte para múltiplas moedas:
+
+Ao usar um único método para tratar moedas diferentes, o código ficou mais escalável e fácil de manter.
+
+Se você precisar de mais alguma melhoria ou personalização, é só me avisar! 😊
+
+pode me explicar cada linha do codigo e comentar o codigo novamente adicionando todos os detalhes, seja o mais detalhista possivel na explicação
+Claro! Vou explicar cada linha do código e, em seguida, comentar o código de maneira detalhada para que você possa compreender cada parte. Vamos lá:
+
+Explicação detalhada do código
+Declaração e manipulação dos elementos do formulário
+javascript
+const form = document.getElementById("form");
+const amount = document.getElementById("amount");
+const currency = document.getElementById("currency");
+Essas três linhas estão selecionando elementos HTML com os IDs form, amount e currency:
+
+form é o formulário que será submetido.
+
+amount é o campo onde o usuário insere o valor que deseja converter.
+
+currency é o select HTML onde o usuário escolhe a moeda (USD, EUR, GBP, etc.).
+
+Garantindo que somente números sejam inseridos no campo amount
+javascript
+amount.addEventListener("input", () => {
+    const hasCharacteresRegex = /\D+/g;
+    amount.value = amount.value.replace(hasCharacteresRegex, "");
+});
+Aqui estamos:
+
+Adicionando um ouvinte de eventos (addEventListener) para o evento input, que é acionado sempre que o usuário digita algo no campo.
+
+Definindo uma expressão regular (/\D+/g) que encontra qualquer caractere que não seja um número (\D significa "não dígitos").
+
+Utilizando o método replace para remover caracteres inválidos e permitir que somente números fiquem no campo.
+
+Isso garante que o campo amount tenha apenas valores numéricos.
+
+Interceptando o evento de envio do formulário
+javascript
+form.onsubmit = async (event) => {
+    event.preventDefault(); // Evita o envio padrão do formulário.
+
+    console.log(currency.value); // Exibe no console a moeda selecionada.
+
+    switch (currency.value) {
+        case "USD":
+        case "EUR":
+        case "GBP":
+            await convertCurrency(amount.value, currency.value);
+            break;
+        default:
+            console.log("Moeda não suportada.");
+            alert("Moeda não suportada.");
+    }
+};
+Explicação:
+
+A função onsubmit captura o evento de envio do formulário.
+
+event.preventDefault() impede que o formulário recarregue a página.
+
+A moeda selecionada no select é exibida no console com console.log(currency.value).
+
+O switch verifica o valor da moeda:
+
+Caso seja "USD", "EUR" ou "GBP", a função convertCurrency é chamada para realizar a conversão.
+
+Caso contrário, exibe um alerta indicando que a moeda não é suportada.
+
+Função que realiza a conversão da moeda
+javascript
+async function convertCurrency(amount, currency) {
+    const url = `https://economia.awesomeapi.com.br/json/last/${currency}-BRL`;
+
+    try {
+        const response = await fetch(url); // Faz uma requisição à API.
+        const data = await response.json(); // Transforma a resposta em JSON.
+        const exchangeRate = data[`${currency}BRL`].bid; // Obtém a taxa de conversão (campo 'bid').
+        const convertedValue = (amount * exchangeRate).toFixed(2); // Converte o valor e formata com duas casas decimais.
+
+        console.log(`Valor convertido: R$ ${convertedValue}`); // Exibe o valor no console.
+        alert(`Valor convertido para ${currency}: R$ ${convertedValue}`); // Exibe o valor em um alerta.
+    } catch (error) {
+        console.error("Erro ao buscar cotação:", error); // Exibe o erro no console, caso ocorra.
+        alert("Erro ao obter a cotação. Por favor, tente novamente."); // Notifica o usuário em caso de erro.
+    }
+}
+Passo a passo do funcionamento:
+
+A URL da API é construída dinamicamente usando o nome da moeda (por exemplo, USD-BRL, EUR-BRL).
+
+É feita uma requisição HTTP com o método fetch para buscar os dados da API.
+
+Os dados retornados pela API são convertidos em um objeto JSON (response.json()).
+
+A taxa de conversão da moeda (bid) é extraída do JSON.
+
+O valor inserido pelo usuário (amount) é multiplicado pela taxa de conversão e formatado com 2 casas decimais (toFixed(2)).
+
+O valor convertido é exibido no console e em um alerta.
+
+O bloco catch captura erros durante o processo e notifica o usuário.
+
+Código comentado
+Abaixo está o código com comentários detalhados:
+
+javascript
+// Obtendo elementos do formulário
+const form = document.getElementById("form"); // Seleciona o formulário pelo ID.
+const amount = document.getElementById("amount"); // Campo de entrada do valor.
+const currency = document.getElementById("currency"); // Campo de seleção de moeda.
+
+// Impede que caracteres não numéricos sejam digitados no campo "amount".
+amount.addEventListener("input", () => {
+    const hasCharacteresRegex = /\D+/g; // Expressão regular para encontrar caracteres não numéricos.
+    amount.value = amount.value.replace(hasCharacteresRegex, ""); // Remove caracteres inválidos.
+});
+
+// Captura o evento de envio do formulário.
+form.onsubmit = async (event) => {
+    event.preventDefault(); // Impede o comportamento padrão de recarregar a página.
+
+    console.log(currency.value); // Exibe no console a moeda escolhida pelo usuário.
+
+    switch (currency.value) {
+        // Verifica se a moeda selecionada é suportada.
+        case "USD": // Caso seja USD (Dólar Americano).
+        case "EUR": // Caso seja EUR (Euro).
+        case "GBP": // Caso seja GBP (Libra Esterlina).
+            await convertCurrency(amount.value, currency.value); // Chama a função de conversão.
+            break;
+        default:
+            console.log("Moeda não suportada."); // Loga no console.
+            alert("Moeda não suportada."); // Notifica o usuário.
+    }
+};
+
+// Função que busca a cotação e realiza a conversão da moeda.
+async function convertCurrency(amount, currency) {
+    // URL da API com a moeda selecionada.
+    const url = `https://economia.awesomeapi.com.br/json/last/${currency}-BRL`;
+
+    try {
+        const response = await fetch(url); // Faz uma requisição HTTP para a API.
+        const data = await response.json(); // Converte a resposta em JSON.
+        const exchangeRate = data[`${currency}BRL`].bid; // Obtém a taxa de câmbio (campo "bid").
+
+        // Calcula o valor convertido e formata com 2 casas decimais.
+        const convertedValue = (amount * exchangeRate).toFixed(2);
+
+        // Exibe o valor convertido no console e em um alerta.
+        console.log(`Valor convertido: R$ ${convertedValue}`);
+        alert(`Valor convertido para ${currency}: R$ ${convertedValue}`);
+    } catch (error) {
+        // Trata erros de requisição ou ao acessar os dados da API.
+        console.error("Erro ao buscar cotação:", error);
+        alert("Erro ao obter a cotação. Por favor, tente novamente.");
+    }
+}
+Se você tiver dúvidas sobre qualquer trecho ou quiser expandir o código para incluir novas funcionalidades, estou à disposição para ajudar! 🚀
